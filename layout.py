@@ -26,7 +26,7 @@ if window_ANTICOR == 'Sales Data':
     st.stop()
 
 if window_ANTICOR == 'MPFM Data':
-    source_data = os.path.join(package_dir, 'Data/MPFM Data.log')
+    source_data = os.path.join(package_dir, 'Data/MPFM Data.txt')
     MPFM_data(source_data)
     st.stop()
 
