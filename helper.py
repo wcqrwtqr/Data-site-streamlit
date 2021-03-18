@@ -17,8 +17,6 @@ def check_if_string_in_file(file_name, string_to_search):
                 return True
     return False
 
-
-
 # ********************************************************************
 # *************** Sales Function ************************************
 # ********************************************************************
@@ -132,7 +130,6 @@ def MPFM_data(source_file):
     oil_GOR = graphing_line_2v(df_lst, 'Clock', 'Std.OilFlowrate', 'GOR(std)')
     gas_oil = graphing_line_2v(df_lst, 'Clock', 'Std.OilFlowrate', 'Std.GasFlowrate')
     oil_water_cum = graphing_line_2v(df_lst, 'Clock', 'Std.AccumOilVol', 'AccumWaterVol')
-
 
     # Drawing the graphs
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
