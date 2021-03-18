@@ -13,32 +13,42 @@ package_dir = os.path.dirname(os.path.abspath(__file__))
 if window_ANTICOR == 'Choose Data':
     st.title('👈🏼 Choose data from menu bar')
 
-
+# Gauges
 if window_ANTICOR == 'Gauges Data':
-    source_data = os.path.join(package_dir, 'Data/Gauges Data.txt')
-    # st.subheader('Down Hole Gauges Data')
+    values = ['Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6']
+    default_ix = values.index('Data 1')
+    x = st.selectbox('Select Different Data', values, index=default_ix)
     st.text('***Dummy Data only***')
-    Gauges_data(source_data)
-    st.stop()
+    source_data = os.path.join(package_dir, f'Data/Gauges Data {values.index(x)}.txt')
+    try:
+        Gauges_data(source_data)
+        st.stop()
+    except Exception:
+        st.title('No Data available!!')
+        st.subheader('Select previous data')
 
+# Sales
 if window_ANTICOR == 'Sales Data':
     source_data = os.path.join(package_dir, 'Data/Sales Data.xlsx')
-    # st.subheader('Marketing and Sales data')
     st.text('***Dummy Data only***')
     Sales_Data(source_data)
     st.stop()
 
+# MPFM
 if window_ANTICOR == 'MPFM Data':
-    source_data = os.path.join(package_dir, 'Data/MPFM Data.txt')
+    # selecting different files from a select box
+    values = ['Data 1', 'Data 2', 'Data 3', 'Data 4', 'Data 5', 'Data 6', 'Data 7','Data 8' ]
+    default_ix = values.index('Data 1')
+    x = st.selectbox('Select Different Data' ,values, index=default_ix)
+    source_data = os.path.join(package_dir, f'Data/MPFM Data {values.index(x)}.txt')
     st.text('***Dummy Data only***')
-    # st.subheader('Multi Phase Meter Data')
-    MPFM_data(source_data)
-    st.stop()
+    try:
+        MPFM_data(source_data)
+        st.stop()
+    except Exception:
+        st.title('No Data available!!')
+        st.subheader('Select previous data')
 
 
-# bar_chart = px.bar(pivot_df, x='Profit', y='Sale', text='Sale',
-#                    color_discrete_sequence=['#F63366']*len(pivot_df),
-#                    template='plotly_white')
-# st.plotly_chart(bar_chart)
 
 

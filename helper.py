@@ -1,41 +1,27 @@
 import pandas as pd
 import streamlit as st
-import plotly.express as px
-import plotly.graph_objs as go
-from plotly.subplots import make_subplots
 import numpy as np
+from graphing import graphing_line_2v, graphing_line_1v
 
-def graphing (df,x, ym, ys):
-    """ Graphing function for two values
 
-    :param df: Dataframe
-    :type df: string
-    :param x: Dataframe for axis x
-    :type x: string
-    :param ym: Dataframe for axis y primary
-    :type ym: string
-    :param ys: Dataframe for axis y secondary
-    :type ys: string
+# Helper function 
+def check_if_string_in_file(file_name, string_to_search):
 
-    :returns: graph object
-    :rtype: figure """
-
-    xt =  df[x]
-    yp = df[ym]
-    yt = df[ys]
-    # Making the graph for the two values
-    fig_n = make_subplots(specs=[[{'secondary_y': True}]])
-    fig_n.update_layout(title_text=ym + ' ' + ys + ' ' + 'Graph')
-    fig_n.update_xaxes(title_text=x)
-    fig_n.update_yaxes(title_text=ym, secondary_y=False)
-    fig_n.update_yaxes(title_text=ys, secondary_y=True)
-    fig_n.add_trace(go.Scatter(x=xt, y=yp, mode='lines', name=ym), secondary_y=False)
-    fig_n.add_trace(go.Scatter(x=xt, y=yt, mode='lines', name=ys), secondary_y=True)
-    return fig_n
+    """ Check if any line in the file contains given string """
+    # Open the file in read only mode
+    with open(file_name, 'r') as read_obj:
+        # Read all lines in the file one by one
+        for line in read_obj:
+            # For each line, check if line contains the string
+            if string_to_search in line:
+                return True
+    return False
 
 
 
-
+# ********************************************************************
+# *************** Sales Function ************************************
+# ********************************************************************
 def Sales_Data(source_file, sheet_name='data', column='A:I'):
     df = pd.read_excel(source_file, sheet_name='data', usecols='A:I')
     df.dropna(inplace=True)
@@ -50,10 +36,11 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
     age_selection = st.slider('Age:', min_value=min(ages), max_value=max(ages), value=(min(ages), max(ages)))
     product_selection = st.multiselect('product:', products, default=products)
     country_selection = st.multiselect('Countries:', country, default=country)
-    gender_selection = st.multiselect('Gender', genders, default=genders) 
-# product_mask = df['Product'].isin(['A'])
+    gender_selection = st.multiselect('Gender', genders, default=genders)
     masked_df = (df['Gender'].isin(gender_selection) & df['Product'].isin(product_selection) & df['Client Age'].between(*age_selection) & df['Country'].isin(country_selection) )
     number_of_results = df[masked_df].shape[0]
+
+    # Pivot table creation 
     pivot_profit_df = df[masked_df].groupby(["Country", "Product"])[['Profit', 'Sale']].sum()
     pivot_count_df = df[masked_df].groupby(["Country", "Product"])[['Gender']].count()
 # Draw the tables on the screen 
@@ -65,54 +52,37 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
     col1.dataframe(pivot_profit_df)
     col2.dataframe(pivot_count_df)
 
-# bar_chart = px.bar(pivot_count_df, x='Profit', y='Sale', text='Sale',
-#                    color_discrete_sequence=['#F63366']*len(pivot_df),
-#                    template='plotly_white')
-# st.plotly_chart(bar_chart)
 # ********************************************************************
 # *************** Gauges Function ************************************
 # ********************************************************************
 
 def Gauges_data(source_file, row=10):
-    df = pd.read_csv(source_file, sep=',', header=None, skiprows=row
-                     , names=['date', 'time', 'pm', 'elapse', 'pressure',
-                     'temperature'])
-    range_data = df['elapse'].unique().tolist()
+
+    # Check if the data comma separated or not
+    if check_if_string_in_file(source_file,  ','):
+        sep = ','
+    else:
+        sep = '\t'
+
+    df = pd.read_csv(source_file, sep=sep, header=None, skiprows=row
+                     , names=['date', 'time', 'pressure', 'temperature'])
+    df['date_time'] = df['date'] + " " + df['time']
+    range_data = df.index.tolist()
     range_data_selection = st.slider('Range:', min_value=min(range_data),
                                      max_value=max(range_data),
                                      value=(min(range_data), max(range_data)))
-    range_mask = df['elapse'].between(*range_data_selection)
-    df_lst = df[range_mask]
-
-# ====================================================================
-# Plotly graphs
-# ====================================================================
-
-    x = df_lst['elapse']
-    yp = df_lst['pressure']
-    yt = df_lst['temperature']
-
-    # Making the graph for the two values
-    fig_n = make_subplots(specs=[[{'secondary_y': True}]])
-    fig_n.update_layout(title_text='Pressure vs Temperature')
-    fig_n.update_xaxes(title_text='Time lapse')
-    fig_n.update_yaxes(title_text='Pressure /psi', secondary_y=False)
-    fig_n.update_yaxes(title_text='Temperature /F', secondary_y=True)
-    fig_n.add_trace(go.Scatter(x=x, y=yt, mode='lines', name='Temperature'), secondary_y=True)
-    fig_n.add_trace(go.Scatter(x=x, y=yp, mode='lines', name='Pressure'), secondary_y=False)
-
-    dx = graphing(df_lst, 'elapse', 'pressure', 'temperature')
-
-
-# ====================================================================
-# Showing the graphs 
-# ====================================================================
+    # Creating the masked df from the index
+    df_lst = df[range_data_selection[0]:range_data_selection[1]]
+    dx = graphing_line_2v(df_lst, 'date_time', 'pressure', 'temperature')
+    # Showing the graphs 
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
     st.markdown('Pressure Temperature Graph')
-    # st.plotly_chart(fig_n)
-    st.plotly_chart(dx)
-    st.markdown('Full Data Table')
-    st.dataframe(df_lst)
+
+    with st.beta_expander(label='Table of Data'):
+        st.markdown('Full Data Table')
+        st.dataframe(df_lst)
+    with st.beta_expander(label='Gauges Chart'):
+        st.plotly_chart(dx)
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
 
 # ********************************************************************
@@ -127,7 +97,9 @@ def MPFM_data(source_file):
     range_data_selection = st.slider('Range:', min_value=min(range_data),
                                      max_value=max(range_data),
                                      value=(min(range_data), max(range_data)))
+    # Creating the masked df from the index
     df_lst = df[range_data_selection[0]:range_data_selection[1]]
+
     # Averages calculation
     avg_P =             np.average(df_lst['Pressure'])
     avg_T =             np.average(df_lst['Temperature'])
@@ -154,22 +126,35 @@ def MPFM_data(source_file):
                     'Gas SG': avg_gasSG, 'Oil SG': avg_oilSG, 'Oil API': API,
                     'BSW': avg_WC, 'Water SG' : avg_waterSG}
     summary = pd.DataFrame([dict_summary])
-    # fig1 = px.scatter(df_lst['Pressure'])
+
+    # Making the graphs
+    ptd = graphing_line_2v(df_lst, 'Clock', 'Pressure', 'dP')
+    oil_GOR = graphing_line_2v(df_lst, 'Clock', 'Std.OilFlowrate', 'GOR(std)')
+    gas_oil = graphing_line_2v(df_lst, 'Clock', 'Std.OilFlowrate', 'Std.GasFlowrate')
+    oil_water_cum = graphing_line_2v(df_lst, 'Clock', 'Std.AccumOilVol', 'AccumWaterVol')
 
 
-# ====================================================================
-# Plotly graphs
-# ====================================================================
-    ptd = graphing(df_lst, 'Clock', 'Pressure', 'dP')
-    oil_GOR = graphing(df_lst, 'Clock', 'Std.OilFlowrate', 'GOR(std)')
-
+    # Drawing the graphs
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
-    st.dataframe(df_lst)
+    with st.beta_expander(label='Data Set'):
+        st.dataframe(df_lst)
     st.markdown('Average Table')
     st.dataframe(summary)
-    st.plotly_chart(ptd)
-    if st.button('make oil grapgh'):
+    st.title('Summary of Data:')
+    col1, col2, col3, col4 = st.beta_columns(4)
+    col1.subheader(f'Oil rate: {int(avg_oilRate)}')
+    col2.subheader(f'Water rate: {int(avg_waterRate)}')
+    gas_rate_float = "{:.4f}".format(avg_std_gasRate)
+    col3.subheader(f'Gas rate: {float(gas_rate_float)}')
+    col4.subheader(f'GOR: {int(avg_GOR)}')
+
+    # Making the graphs
+    with st.beta_expander(label='Parameters Charts'):
+        st.plotly_chart(ptd)
         st.plotly_chart(oil_GOR)
+    with st.beta_expander(label='Flow Rate Charts'):
+        st.plotly_chart(gas_oil)
+        st.plotly_chart(oil_water_cum)
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
 
 
