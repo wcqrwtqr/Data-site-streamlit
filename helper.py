@@ -139,7 +139,7 @@ def MPFM_data(source_file):
         st.dataframe(df_lst)
     st.markdown('Average Table')
     st.dataframe(summary)
-    st.title('Summary of Data:')
+    st.subheader('Summary of Data:')
     col1, col2, col3, col4 = st.beta_columns(4)
     col1.subheader(f'Oil rate: {int(avg_oilRate)}')
     col2.subheader(f'Water rate: {int(avg_waterRate)}')
