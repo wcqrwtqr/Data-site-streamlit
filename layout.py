@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 from helper import Sales_Data, Gauges_data, MPFM_data
+from PIL import Image
 
 
 st.set_page_config(page_title='Data analysis page')
@@ -22,7 +23,10 @@ if window_ANTICOR == 'Gauges Data':
     source_data = os.path.join(package_dir, f'Data/Gauges Data {values.index(x)}.txt')
     try:
         Gauges_data(source_data)
-        st.stop()
+        col1, col2 = st.beta_columns(2)
+        image = Image.open(os.path.join(package_dir,'Thumbnail/Gauges data thumbnail.jpg'))
+        col1.image(image, caption='youtube', width=100)
+        col2.markdown('See my youtube on this data: https://youtu.be/C6oz96OLCCg')
     except Exception:
         st.title('No Data available!!')
         st.subheader('Select previous data')
@@ -32,7 +36,10 @@ if window_ANTICOR == 'Sales Data':
     source_data = os.path.join(package_dir, 'Data/Sales Data.xlsx')
     st.text('***Dummy Data only***')
     Sales_Data(source_data)
-    st.stop()
+    col1, col2 = st.beta_columns(2)
+    image = Image.open(os.path.join(package_dir,'Thumbnail/Pivot table thumbnail.jpg'))
+    col1.image(image, caption='youtube', width=100)
+    col2.markdown('See my youtube on this data:https://youtu.be/sctzeSaUL2')
 
 # MPFM
 if window_ANTICOR == 'MPFM Data':
@@ -44,7 +51,10 @@ if window_ANTICOR == 'MPFM Data':
     st.text('***Dummy Data only***')
     try:
         MPFM_data(source_data)
-        st.stop()
+        col1, col2 = st.beta_columns(2)
+        image = Image.open(os.path.join(package_dir,'Thumbnail/MPFM data thumbnail.jpg'))
+        col1.image(image, caption='youtube', width=100)
+        col2.markdown('See my youtube on this data:https://youtu.be/sctzeSaUL2c')
     except Exception:
         st.title('No Data available!!')
         st.subheader('Select previous data')

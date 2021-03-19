@@ -32,9 +32,10 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
     ages = df['Client Age'].unique().tolist()
 # webpage selections
     age_selection = st.slider('Age:', min_value=min(ages), max_value=max(ages), value=(min(ages), max(ages)))
-    product_selection = st.multiselect('product:', products, default=products)
+    col1, col2 = st.beta_columns(2)
+    product_selection = col1.multiselect('product:', products, default=products)
+    gender_selection = col2.multiselect('Gender', genders, default=genders)
     country_selection = st.multiselect('Countries:', country, default=country)
-    gender_selection = st.multiselect('Gender', genders, default=genders)
     masked_df = (df['Gender'].isin(gender_selection) & df['Product'].isin(product_selection) & df['Client Age'].between(*age_selection) & df['Country'].isin(country_selection) )
     number_of_results = df[masked_df].shape[0]
 
@@ -43,12 +44,13 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
     pivot_count_df = df[masked_df].groupby(["Country", "Product"])[['Gender']].count()
 # Draw the tables on the screen 
     st.markdown(f'*Available Results: {number_of_results}')
-    st.dataframe(df[masked_df])
+    with st.beta_expander(label='Data Table'):
+        st.dataframe(df[masked_df])
 # Pivot table using groupby in pandas 
-    st.markdown('Pivot tables')
-    col1, col2 = st.beta_columns(2)
-    col1.dataframe(pivot_profit_df)
-    col2.dataframe(pivot_count_df)
+    with st.beta_expander(label='Pivot Tables'):
+        col1, col2 = st.beta_columns(2)
+        col1.dataframe(pivot_profit_df)
+        col2.dataframe(pivot_count_df)
 
 # ********************************************************************
 # *************** Gauges Function ************************************
