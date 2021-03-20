@@ -149,11 +149,13 @@ def MPFM_data(source_file):
 
     # Making the graphs
     with st.beta_expander(label='Parameters Charts'):
-        st.plotly_chart(ptd)
-        st.plotly_chart(oil_GOR)
+        col6, col7= st.beta_columns(2)
+        col6.plotly_chart(ptd)
+        col7.plotly_chart(oil_GOR)
     with st.beta_expander(label='Flow Rate Charts'):
-        st.plotly_chart(gas_oil)
-        st.plotly_chart(oil_water_cum)
+        col8, col9= st.beta_columns(2)
+        col8.plotly_chart(gas_oil)
+        col9.plotly_chart(oil_water_cum)
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
 
 
