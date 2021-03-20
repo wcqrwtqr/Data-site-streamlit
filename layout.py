@@ -4,7 +4,7 @@ from helper import Sales_Data, Gauges_data, MPFM_data
 from PIL import Image
 
 
-st.set_page_config(page_title='Data analysis page')
+st.set_page_config(page_title='Data analysis page', layout='wide')
 st.title('Data Playground Web Page')
 values = ['Choose Data','Sales Data', 'Gauges Data', 'MPFM Data']
 default_ix = values.index('Choose Data')
@@ -13,6 +13,11 @@ window_ANTICOR = st.sidebar.selectbox('Selection Window', values, index=default_
 package_dir = os.path.dirname(os.path.abspath(__file__))
 if window_ANTICOR == 'Choose Data':
     st.title('👈🏼 Choose data from menu bar')
+    image = Image.open(os.path.join( package_dir,'Thumbnail/youtube.jpg'))
+    st.subheader('About the website:')
+    st.write('Select data type from the list to the side and explore who they change with built in handles All data are dummy data and there is several data in each page')
+    st.write("You can find the data disused in my youtube channel and I've added the ")
+    st.image(image, caption = 'youtube channel')
 
 # Gauges
 if window_ANTICOR == 'Gauges Data':
