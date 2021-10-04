@@ -5,7 +5,7 @@ from PIL import Image
 
 st.set_page_config(page_title='Data analysis page', layout='wide')
 st.title('Data Playground Web Page')
-values = ['Choose Data','Sales Data', 'Gauges Data', 'MPFM Data']
+values = ['Choose Data','Sales Data', 'Gauges Data', 'MPFM Data', 'MPFM Upload', 'Gauges Upload']
 default_ix = values.index('Choose Data')
 window_ANTICOR = st.sidebar.selectbox('Selection Window', values, index=default_ix)
 
@@ -67,5 +67,35 @@ if window_ANTICOR == 'MPFM Data':
         st.subheader('Select previous data')
 
 
+# MPFM Upload
+if window_ANTICOR == 'MPFM Upload':
+    source_data = st.file_uploader(label='Uplaod MPFM data to web page', type=['csv', 'log', 'txt'])
+    try:
+        st.title('Multiphase Meter Data')
+        st.text('***Dummy Data only***')
+        MPFM_data(source_data)
+        col1, col2 = st.beta_columns(2)
+        image = Image.open(os.path.join(package_dir,'Thumbnail/MPFM data thumbnail.jpg'))
+        col1.image(image, caption='youtube', width=100)
+        col2.markdown('See my youtube on this data:https://youtu.be/sctzeSaUL2c')
+    except Exception:
+        st.title('Wrong data selected')
+        st.subheader('Select the correct data for the MPFM')
+
+
+# Gauges Upload
+if window_ANTICOR == 'Gauges Upload':
+    source_data = st.file_uploader(label='Uplaod MPFM data to web page', type=['csv', 'log', 'txt'])
+    try:
+        st.title('Multiphase Meter Data')
+        st.text('***Dummy Data only***')
+        Gauges_data(source_data)
+        col1, col2 = st.beta_columns(2)
+        image = Image.open(os.path.join(package_dir,'Thumbnail/MPFM data thumbnail.jpg'))
+        col1.image(image, caption='youtube', width=100)
+        col2.markdown('See my youtube on this data:https://youtu.be/sctzeSaUL2c')
+    except Exception:
+        st.title('Wrong data selected')
+        st.subheader('Select the correct data for the MPFM')
 
 

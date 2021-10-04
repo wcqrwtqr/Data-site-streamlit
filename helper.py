@@ -68,15 +68,15 @@ def Gauges_data(source_file, row=10):
 
     # Check if the data comma separated or not, if the file contains comma then
     # sep should be comma otherwise use the tab
-    if check_if_string_in_file(source_file,  ','):
+    if check_if_string_in_file(source_file, ','):
         sep = ','
     else:
         sep = '\t'
 
     df = pd.read_csv(source_file, sep=sep, header=None, skiprows=row
                      , names=['date', 'time', 'pressure', 'temperature'])
-    df['date_time'] = df['date'] + " " + df['time']
     range_data = df.index.tolist()
+    df['date_time'] = df['date'] + " " + df['time']
     range_data_selection = st.slider('Range:', min_value=min(range_data),
                                      max_value=max(range_data),
                                      value=(min(range_data), max(range_data)))
