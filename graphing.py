@@ -31,10 +31,6 @@ def graphing_line_2v (df, x, ym, ys):
     return fig_n
 
 
-
-
-
-
 def graphing_line_1v (df, x, y):
     """ Graphing function for two values
 

@@ -3,11 +3,10 @@ import streamlit as st
 import numpy as np
 from graphing import graphing_line_2v, graphing_line_1v
 
+#Helper function
 
-# Helper function 
+''' This function is used to check if the data used for reading to pandas are using a comma or tab '''
 def check_if_string_in_file(file_name, string_to_search):
-
-    """ Check if any line in the file contains given string """
     # Open the file in read only mode
     with open(file_name, 'r') as read_obj:
         # Read all lines in the file one by one
@@ -26,17 +25,17 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
     df['Sale'] = df['Price']*df['Qty']
     df['Profit'] = df['Sale']*df['Margin']/100
 # Masks
-    genders = ['Male', 'Female']
+    genders  = ['Male', 'Female']
     products = df['Product'].unique().tolist()
-    country = df['Country'].unique().tolist()
-    ages = df['Client Age'].unique().tolist()
+    country  = df['Country'].unique().tolist()
+    ages     = df['Client Age'].unique().tolist()
 # webpage selections
     age_selection = st.slider('Age:', min_value=min(ages), max_value=max(ages), value=(min(ages), max(ages)))
-    col1, col2 = st.beta_columns(2)
-    product_selection = col1.multiselect('product:', products, default=products)
-    gender_selection = col2.multiselect('Gender', genders, default=genders)
-    country_selection = st.multiselect('Countries:', country, default=country)
-    masked_df = (df['Gender'].isin(gender_selection) & df['Product'].isin(product_selection) & df['Client Age'].between(*age_selection) & df['Country'].isin(country_selection) )
+    col1, col2        = st.beta_columns(2)
+    product_selection = col1.multiselect('product:', products, default = products)
+    gender_selection  = col2.multiselect('Gender', genders, default    = genders)
+    country_selection = st.multiselect('Countries:', country, default  = country)
+    masked_df         = (df['Gender'].isin(gender_selection) & df['Product'].isin(product_selection) & df['Client Age'].between(*age_selection) & df['Country'].isin(country_selection) )
     number_of_results = df[masked_df].shape[0]
 
     # Pivot table creation 
@@ -57,8 +56,18 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
 # ********************************************************************
 
 def Gauges_data(source_file, row=10):
+    """ Gauges data processing generator
 
-    # Check if the data comma separated or not
+    :param source_file: file path
+    :type source_file: string
+    :param row: number of rows
+    :type row: int
+
+    :returns: None
+    :rtype: None """
+
+    # Check if the data comma separated or not, if the file contains comma then
+    # sep should be comma otherwise use the tab
     if check_if_string_in_file(source_file,  ','):
         sep = ','
     else:
@@ -73,6 +82,7 @@ def Gauges_data(source_file, row=10):
                                      value=(min(range_data), max(range_data)))
     # Creating the masked df from the index
     df_lst = df[range_data_selection[0]:range_data_selection[1]]
+    # graphing the values of time, pressure and temperature using the function
     dx = graphing_line_2v(df_lst, 'date_time', 'pressure', 'temperature')
     # Showing the graphs 
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
@@ -89,7 +99,17 @@ def Gauges_data(source_file, row=10):
 # ************** MPFM Function ***************************************
 # ********************************************************************
 
+'''This function used to compute the MPFM data and generate the needed graphs and
+excel sheet tables with averages'''
 def MPFM_data(source_file):
+    """ MPFM data processing generator
+
+    :param source_file: file path
+    :type source_file: string
+
+    :returns: None
+    :rtype: None """
+
     df = pd.read_csv(source_file, sep='\t')
     df.dropna(inplace=True, axis=1)
     # Masking
@@ -101,22 +121,22 @@ def MPFM_data(source_file):
     df_lst = df[range_data_selection[0]:range_data_selection[1]]
 
     # Averages calculation
-    avg_P =             np.average(df_lst['Pressure'])
-    avg_T =             np.average(df_lst['Temperature'])
-    avg_dP =            np.average(df_lst['dP'])
-    avg_oilRate =       np.average(df_lst['Std.OilFlowrate'])
-    avg_waterRate =     np.average(df_lst['WaterFlowrate'])
-    avg_std_gasRate =   np.average(df_lst['Std.GasFlowrate'])
-    avg_act_gasRate =   np.average(df_lst['Act.GasFlowrate'])
-    avg_GOR =           np.average(df_lst['GOR(std)'])
-    avg_WC =            np.average(df_lst['Std.Watercut'])
-    avg_oilSG =         np.average(df_lst['OilDensity'])
-    avg_waterSG =       np.average(df_lst['WaterDensity'])
-    avg_gasSG =         np.average(df_lst['GasDensity'])
-    avg_liquid =        avg_oilRate + avg_waterRate
-    API =               (141.5/(avg_oilSG/1000) - 131.5)
-    start = df_lst['Clock'][range_data_selection[0]] + ' ' + df_lst['Date'][range_data_selection[0]]
-    end = df_lst['Clock'][range_data_selection[1]-1] + ' ' + df_lst['Date'][range_data_selection[1]-1]
+    avg_P           = np.average(df_lst['Pressure'])
+    avg_T           = np.average(df_lst['Temperature'])
+    avg_dP          = np.average(df_lst['dP'])
+    avg_oilRate     = np.average(df_lst['Std.OilFlowrate'])
+    avg_waterRate   = np.average(df_lst['WaterFlowrate'])
+    avg_std_gasRate = np.average(df_lst['Std.GasFlowrate'])
+    avg_act_gasRate = np.average(df_lst['Act.GasFlowrate'])
+    avg_GOR         = np.average(df_lst['GOR(std)'])
+    avg_WC          = np.average(df_lst['Std.Watercut'])
+    avg_oilSG       = np.average(df_lst['OilDensity'])
+    avg_waterSG     = np.average(df_lst['WaterDensity'])
+    avg_gasSG       = np.average(df_lst['GasDensity'])
+    avg_liquid      = avg_oilRate + avg_waterRate
+    API             = (141.5/(avg_oilSG/1000) - 131.5)
+    start           = df_lst['Clock'][range_data_selection[0]] + ' ' + df_lst['Date'][range_data_selection[0]]
+    end             = df_lst['Clock'][range_data_selection[1]-1] + ' ' + df_lst['Date'][range_data_selection[1]-1]
     # Making the dataframe
     dict_summary = {'Start Time': start,
                     'End Time': end, 'WHP': avg_P, 'WHT': avg_T,
@@ -128,9 +148,9 @@ def MPFM_data(source_file):
     summary = pd.DataFrame([dict_summary])
 
     # Making the graphs
-    ptd = graphing_line_2v(df_lst, 'Clock', 'Pressure', 'dP')
-    oil_GOR = graphing_line_2v(df_lst, 'Clock', 'Std.OilFlowrate', 'GOR(std)')
-    gas_oil = graphing_line_2v(df_lst, 'Clock', 'Std.OilFlowrate', 'Std.GasFlowrate')
+    ptd           = graphing_line_2v(df_lst, 'Clock', 'Pressure', 'dP')
+    oil_GOR       = graphing_line_2v(df_lst, 'Clock', 'Std.OilFlowrate', 'GOR(std)')
+    gas_oil       = graphing_line_2v(df_lst, 'Clock', 'Std.OilFlowrate', 'Std.GasFlowrate')
     oil_water_cum = graphing_line_2v(df_lst, 'Clock', 'Std.AccumOilVol', 'AccumWaterVol')
 
     # Drawing the graphs
@@ -149,11 +169,11 @@ def MPFM_data(source_file):
 
     # Making the graphs
     with st.beta_expander(label='Parameters Charts'):
-        col6, col7= st.beta_columns(2)
+        col6, col7 = st.beta_columns(2)
         col6.plotly_chart(ptd)
         col7.plotly_chart(oil_GOR)
     with st.beta_expander(label='Flow Rate Charts'):
-        col8, col9= st.beta_columns(2)
+        col8, col9 = st.beta_columns(2)
         col8.plotly_chart(gas_oil)
         col9.plotly_chart(oil_water_cum)
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
