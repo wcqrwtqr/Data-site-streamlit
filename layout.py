@@ -3,7 +3,6 @@ import os
 from helper import Sales_Data, Gauges_data, MPFM_data
 from PIL import Image
 
-'''Generate the layout main page features'''
 st.set_page_config(page_title='Data analysis page', layout='wide')
 st.title('Data Playground Web Page')
 values = ['Choose Data','Sales Data', 'Gauges Data', 'MPFM Data']
