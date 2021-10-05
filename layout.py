@@ -5,7 +5,8 @@ from PIL import Image
 
 st.set_page_config(page_title='Data analysis page', layout='wide')
 st.title('Data Playground Web Page')
-values = ['Choose Data','Sales Data', 'Gauges Data', 'MPFM Data', 'MPFM Upload', 'Gauges Upload']
+# values = ['Choose Data','Sales Data', 'Gauges Data', 'MPFM Data', 'MPFM Upload', 'Gauges Upload']
+values = ['Choose Data','Sales Data', 'Gauges Data', 'MPFM Data', 'MPFM Upload']
 default_ix = values.index('Choose Data')
 window_ANTICOR = st.sidebar.selectbox('Selection Window', values, index=default_ix)
 
@@ -82,10 +83,11 @@ if window_ANTICOR == 'MPFM Upload':
         st.title('Wrong data selected')
         st.subheader('Select the correct data for the MPFM')
 
+'''
 
 # Gauges Upload
 if window_ANTICOR == 'Gauges Upload':
-    source_data = st.file_uploader(label='Uplaod MPFM data to web page', type=['csv', 'log', 'txt'])
+    source_data = st.file_uploader(label='Uplaod MPFM data to web page', type=['csv', 'txt'])
     try:
         st.title('Multiphase Meter Data')
         st.text('***Dummy Data only***')
@@ -99,3 +101,4 @@ if window_ANTICOR == 'Gauges Upload':
         st.subheader('Select the correct data for the MPFM')
 
 
+'''

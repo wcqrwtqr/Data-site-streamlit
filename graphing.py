@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
 def graphing_line_2v (df, x, ym, ys):
-    """ Graphing function for two values
+    """ Graphing function for two axis
 
     :param df: Dataframe
     :type df: string
@@ -32,7 +32,7 @@ def graphing_line_2v (df, x, ym, ys):
 
 
 def graphing_line_1v (df, x, y):
-    """ Graphing function for two values
+    """ Graphing function for one axis
 
     :param df: Dataframe
     :type df: string
