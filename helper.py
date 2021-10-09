@@ -22,8 +22,9 @@ def check_if_string_in_file(file_name, string_to_search):
 def Sales_Data(source_file, sheet_name='data', column='A:I'):
     df = pd.read_excel(source_file, sheet_name='data', usecols='A:I')
     df.dropna(inplace=True)
-    df['Sale'] = df['Price']*df['Qty']
+    df['Sale']   = df['Price']*df['Qty']
     df['Profit'] = df['Sale']*df['Margin']/100
+
 # Masks
     genders  = ['Male', 'Female']
     products = df['Product'].unique().tolist()
@@ -40,7 +41,7 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
 
     # Pivot table creation 
     pivot_profit_df = df[masked_df].groupby(["Country", "Product"])[['Profit', 'Sale']].sum()
-    pivot_count_df = df[masked_df].groupby(["Country", "Product"])[['Gender']].count()
+    pivot_count_df  = df[masked_df].groupby(["Country", "Product"])[['Gender']].count()
 # Draw the tables on the screen 
     st.markdown(f'*Available Results: {number_of_results}')
     with st.beta_expander(label='Data Table'):
@@ -137,6 +138,7 @@ def MPFM_data(source_file):
     API             = (141.5/(avg_oilSG/1000) - 131.5)
     start           = df_lst['Clock'][range_data_selection[0]] + ' ' + df_lst['Date'][range_data_selection[0]]
     end             = df_lst['Clock'][range_data_selection[1]-1] + ' ' + df_lst['Date'][range_data_selection[1]-1]
+
     # Making the dataframe
     dict_summary = {'Start Time': start,
                     'End Time': end, 'WHP': avg_P, 'WHT': avg_T,
@@ -145,7 +147,7 @@ def MPFM_data(source_file):
                     'Actual Gas Rate': avg_act_gasRate, 'Total GOR': avg_GOR,
                     'Gas SG': avg_gasSG, 'Oil SG': avg_oilSG, 'Oil API': API,
                     'BSW': avg_WC, 'Water SG' : avg_waterSG}
-    summary = pd.DataFrame([dict_summary])
+    summary      = pd.DataFrame([dict_summary])
 
     # Making the graphs
     ptd           = graphing_line_2v(df_lst, 'Clock', 'Pressure', 'dP')
