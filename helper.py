@@ -32,7 +32,7 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
     ages     = df['Client Age'].unique().tolist()
 # webpage selections
     age_selection = st.slider('Age:', min_value=min(ages), max_value=max(ages), value=(min(ages), max(ages)))
-    col1, col2        = st.beta_columns(2)
+    col1, col2        = st.columns(2)
     product_selection = col1.multiselect('product:', products, default = products)
     gender_selection  = col2.multiselect('Gender', genders, default    = genders)
     country_selection = st.multiselect('Countries:', country, default  = country)
@@ -44,11 +44,11 @@ def Sales_Data(source_file, sheet_name='data', column='A:I'):
     pivot_count_df  = df[masked_df].groupby(["Country", "Product"])[['Gender']].count()
 # Draw the tables on the screen 
     st.markdown(f'*Available Results: {number_of_results}')
-    with st.beta_expander(label='Data Table'):
+    with st.expander(label='Data Table'):
         st.dataframe(df[masked_df])
 # Pivot table using groupby in pandas 
-    with st.beta_expander(label='Pivot Tables'):
-        col1, col2 = st.beta_columns(2)
+    with st.expander(label='Pivot Tables'):
+        col1, col2 = st.columns(2)
         col1.dataframe(pivot_profit_df)
         col2.dataframe(pivot_count_df)
 
@@ -89,10 +89,10 @@ def Gauges_data(source_file, row=10):
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
     st.markdown('Pressure Temperature Graph')
 
-    with st.beta_expander(label='Table of Data'):
+    with st.expander(label='Table of Data'):
         st.markdown('Full Data Table')
         st.dataframe(df_lst)
-    with st.beta_expander(label='Gauges Chart'):
+    with st.expander(label='Gauges Chart'):
         st.plotly_chart(dx)
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
 
@@ -157,12 +157,12 @@ def MPFM_data(source_file):
 
     # Drawing the graphs
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
-    with st.beta_expander(label='Data Set'):
+    with st.expander(label='Data Set'):
         st.dataframe(df_lst)
     st.markdown('Average Table')
     st.dataframe(summary)
     st.subheader('Summary of Data:')
-    col1, col2, col3, col4 = st.beta_columns(4)
+    col1, col2, col3, col4 = st.columns(4)
     col1.subheader(f'Oil rate: {int(avg_oilRate)}')
     col2.subheader(f'Water rate: {int(avg_waterRate)}')
     gas_rate_float = "{:.4f}".format(avg_std_gasRate)
@@ -170,12 +170,12 @@ def MPFM_data(source_file):
     col4.subheader(f'GOR: {int(avg_GOR)}')
 
     # Making the graphs
-    with st.beta_expander(label='Parameters Charts'):
-        col6, col7 = st.beta_columns(2)
+    with st.expander(label='Parameters Charts'):
+        col6, col7 = st.columns(2)
         col6.plotly_chart(ptd)
         col7.plotly_chart(oil_GOR)
-    with st.beta_expander(label='Flow Rate Charts'):
-        col8, col9 = st.beta_columns(2)
+    with st.expander(label='Flow Rate Charts'):
+        col8, col9 = st.columns(2)
         col8.plotly_chart(gas_oil)
         col9.plotly_chart(oil_water_cum)
     st.markdown(f'*Available Data: {df_lst.shape[0]}')
